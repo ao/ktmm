@@ -43,3 +43,6 @@ virtualenv -p python3 env
 pip install -r requirements.txt
 python ktmm.py
 ```
+
+# Looking for a cross-platform version?
+If you need a cross-platform version, you can use the [Java version](https://github.com/ao/ktmm-java)
