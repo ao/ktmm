@@ -69,6 +69,29 @@ chmod +x ktmm-*
 ##### Prerequisites
 
 - Rust and Cargo installed (https://www.rust-lang.org/tools/install)
+- **Linux only**: X11 development libraries
+
+##### Linux System Dependencies
+
+KTMM requires X11 development libraries on Linux systems. Install them using your distribution's package manager:
+
+**Ubuntu/Debian**:
+```bash
+sudo apt-get update
+sudo apt-get install -y libx11-dev libxtst-dev libxinerama-dev libxrandr-dev libxss-dev
+```
+
+**Fedora/RHEL/CentOS**:
+```bash
+sudo dnf install -y libX11-devel libXtst-devel libXinerama-devel libXrandr-devel libXScrnSaver-devel
+```
+
+**Arch Linux**:
+```bash
+sudo pacman -S libx11 libxtst libxinerama libxrandr libxss
+```
+
+**Note**: KTMM is designed for X11 and may have limited functionality under Wayland.
 
 ##### Build
 
