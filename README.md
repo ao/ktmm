@@ -40,7 +40,7 @@ The mouse movements are minimal and designed to be barely noticeable during norm
 ### Homebrew (macOS)
 
 ```bash
-# Add the tap (only needed once)
+# Optionally: Add this official tap (only needed once)
 brew tap ao/ktmm https://github.com/ao/ktmm
 
 # Install KTMM

@@ -1,7 +1,7 @@
 [package]
 name = "ktmm"
 version = "0.2.0"
-edition = "2019"
+edition = "2021"
 authors = ["Andrew O", "Ataiva.com"]
 description = "Keep That Mouse Moving - Prevents system sleep by making periodic mouse movements"
 readme = "README.md"
