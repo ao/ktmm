@@ -21,7 +21,7 @@ jobs:
       if: runner.os == 'Linux'
       run: |
         sudo apt-get update
-        sudo apt-get install -y libx11-dev libxtst-dev libxinerama-dev libxrandr-dev libxss-dev
+        sudo apt-get install -y libx11-dev libxtst-dev libxinerama-dev libxrandr-dev libxss-dev libxdo-dev
     - name: Set up Rust
       uses: actions-rs/toolchain@v1
       with:
@@ -62,7 +62,7 @@ jobs:
       if: runner.os == 'Linux'
       run: |
         sudo apt-get update
-        sudo apt-get install -y libx11-dev libxtst-dev libxinerama-dev libxrandr-dev libxss-dev
+        sudo apt-get install -y libx11-dev libxtst-dev libxinerama-dev libxrandr-dev libxss-dev libxdo-dev
     - name: Set up Rust
       uses: actions-rs/toolchain@v1
       with:

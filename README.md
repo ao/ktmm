@@ -78,17 +78,17 @@ KTMM requires X11 development libraries on Linux systems. Install them using you
 **Ubuntu/Debian**:
 ```bash
 sudo apt-get update
-sudo apt-get install -y libx11-dev libxtst-dev libxinerama-dev libxrandr-dev libxss-dev
+sudo apt-get install -y libx11-dev libxtst-dev libxinerama-dev libxrandr-dev libxss-dev libxdo-dev
 ```
 
 **Fedora/RHEL/CentOS**:
 ```bash
-sudo dnf install -y libX11-devel libXtst-devel libXinerama-devel libXrandr-devel libXScrnSaver-devel
+sudo dnf install -y libX11-devel libXtst-devel libXinerama-devel libXrandr-devel libXScrnSaver-devel libxdo-devel
 ```
 
 **Arch Linux**:
 ```bash
-sudo pacman -S libx11 libxtst libxinerama libxrandr libxss
+sudo pacman -S libx11 libxtst libxinerama libxrandr libxss xdotool
 ```
 
 **Note**: KTMM is designed for X11 and may have limited functionality under Wayland.
