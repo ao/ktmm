@@ -1,7 +1,7 @@
 class Ktmm < Formula
   desc "Keep That Mouse Moving - Prevents system sleep by making periodic mouse movements"
   homepage "https://github.com/ao/ktmm"
-  url "https://github.com/ao/ktmm/archive/refs/tags/v0.3.0.tar.gz"
+  url "https://github.com/ao/ktmm/archive/refs/tags/v0.4.0.tar.gz"
   sha256 "e5800176934df7539fa31b15afccc18385de794be1b4babe834dd47c659aec7e"
   license "MIT"
 
@@ -12,7 +12,7 @@ class Ktmm < Formula
   end
 
   test do
-    assert_match "ktmm 0.3.0", shell_output("#{bin}/ktmm --version")
+    assert_match "ktmm 0.4.0", shell_output("#{bin}/ktmm --version")
   end
 
   def caveats
