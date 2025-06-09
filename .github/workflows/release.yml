@@ -21,16 +21,22 @@ jobs:
       if: runner.os == 'Linux'
       run: |
         sudo apt-get update
-        sudo apt-get install -y libx11-dev libxtst-dev libxinerama-dev libxrandr-dev libxss-dev libxdo-dev
+        sudo apt-get install -y libx11-dev libxtst-dev libxinerama-dev libxrandr-dev libxss-dev libxdo-dev xvfb
     - name: Set up Rust
       uses: actions-rs/toolchain@v1
       with:
         toolchain: stable
         override: true
     - name: Run tests
+      if: runner.os != 'Linux'
       uses: actions-rs/cargo@v1
       with:
         command: test
+    - name: Run tests with xvfb (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        export XVFB_RUNNING=1
+        xvfb-run -a cargo test
 
   build:
     name: Build ${{ matrix.target }}
@@ -62,7 +68,7 @@ jobs:
       if: runner.os == 'Linux'
       run: |
         sudo apt-get update
-        sudo apt-get install -y libx11-dev libxtst-dev libxinerama-dev libxrandr-dev libxss-dev libxdo-dev
+        sudo apt-get install -y libx11-dev libxtst-dev libxinerama-dev libxrandr-dev libxss-dev libxdo-dev xvfb
     - name: Set up Rust
       uses: actions-rs/toolchain@v1
       with:
@@ -70,11 +76,18 @@ jobs:
         override: true
         target: ${{ matrix.target }}
     
-    - name: Build
+    - name: Build (non-Linux)
+      if: runner.os != 'Linux'
       uses: actions-rs/cargo@v1
       with:
         command: build
         args: --release --target ${{ matrix.target }}
+        
+    - name: Build (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        export XVFB_RUNNING=1
+        xvfb-run -a cargo build --release --target ${{ matrix.target }}
     
     - name: Prepare artifact
       shell: bash

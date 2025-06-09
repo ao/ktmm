@@ -1,4 +1,20 @@
 use ktmm::{MouseMover, MouseMoverConfig};
+use std::env;
+
+// Helper function to detect if we're running in a headless environment
+fn is_headless() -> bool {
+    // Check if DISPLAY environment variable is set (X11)
+    if env::var("DISPLAY").is_err() {
+        return true;
+    }
+    
+    // Additional check for CI environment
+    if env::var("CI").is_ok() && env::var("XVFB_RUNNING").is_err() {
+        return true;
+    }
+    
+    false
+}
 
 // This test verifies that the default configuration is set correctly
 #[test]
@@ -13,6 +29,11 @@ fn test_default_config() {
 #[test]
 #[cfg(not(target_os = "macos"))]
 fn test_custom_config() {
+    // Skip test if running in a headless environment without xvfb
+    if is_headless() {
+        println!("Skipping test_custom_config in headless environment");
+        return;
+    }
     let config = MouseMoverConfig {
         interval_secs: 30,
         movement_pixels: (2, 3),
@@ -46,6 +67,11 @@ fn test_custom_config() {
 #[test]
 #[cfg(not(target_os = "macos"))]
 fn test_permissions() {
+    // Skip test if running in a headless environment without xvfb
+    if is_headless() {
+        println!("Skipping test_permissions in headless environment");
+        return;
+    }
     let mover = MouseMover::default();
     let result = mover.check_permissions();
     assert!(result.is_ok());
