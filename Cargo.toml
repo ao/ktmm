@@ -1,14 +1,14 @@
 [package]
 name = "ktmm"
-version = "0.1.0"
-edition = "2021"
+version = "0.2.0"
+edition = "2019"
 authors = ["Andrew O", "Ataiva.com"]
 description = "Keep That Mouse Moving - Prevents system sleep by making periodic mouse movements"
 readme = "README.md"
 license = "MIT"
-homepage = "https://github.com/username/ktmm"
-repository = "https://github.com/username/ktmm"
-documentation = "https://github.com/username/ktmm"
+homepage = "https://ataiva.com/keep-that-mouse-moving/"
+repository = "https://github.com/ao/ktmm"
+documentation = "https://github.com/ao/ktmm"
 keywords = ["utility", "mouse", "automation", "system", "idle"]
 categories = ["command-line-utilities", "os"]
 

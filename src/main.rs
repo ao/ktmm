@@ -46,22 +46,31 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     println!("KTMM is running. Press Ctrl+C to exit.");
-
-    println!("KTMM is running. Press Ctrl+C to exit.");
-
+    
     // Main loop - runs in the current thread
     while running.load(Ordering::SeqCst) {
-        // Sleep for the configured interval
-        thread::sleep(Duration::from_secs(mouse_mover.config.interval_secs));
-
-        // Move the mouse
-        if let Err(e) = mouse_mover.move_mouse_once() {
-            eprintln!("Error moving mouse: {}", e);
-            // Continue running despite errors
+        // Instead of one long sleep, use shorter sleeps and check the running flag frequently
+        let total_sleep_secs = mouse_mover.config.interval_secs;
+        let check_interval_ms = 100; // Check every 100ms for interruption
+        let iterations = (total_sleep_secs * 1000) / check_interval_ms;
+        
+        for _ in 0..iterations {
+            if !running.load(Ordering::SeqCst) {
+                break; // Exit the sleep loop if we've been signaled to stop
+            }
+            thread::sleep(Duration::from_millis(check_interval_ms));
+        }
+        
+        // Only move the mouse if we're still running
+        if running.load(Ordering::SeqCst) {
+            if let Err(e) = mouse_mover.move_mouse_once() {
+                eprintln!("Error moving mouse: {}", e);
+                // Continue running despite errors
+            }
         }
     }
 
-    println!("KTMM has been stopped.");
+    println!("KTMM has been cleanly shut down.");
     Ok(())
 }
 
