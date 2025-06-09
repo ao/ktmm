@@ -125,3 +125,29 @@ cargo run --release
 ## License
 
 MIT
+
+## Development
+
+### Automatic Formula Updates
+
+This project is configured to automatically update the Homebrew formula whenever a new release is created. The GitHub Actions workflow:
+
+1. Builds binaries for all supported platforms
+2. Creates a GitHub release with the binaries
+3. Calculates SHA256 checksums for the macOS binaries
+4. Updates the `Formula/ktmm.rb` file with the new version and checksums
+5. Commits and pushes the changes back to the repository
+
+This eliminates the need for manual updates to the formula when releasing new versions. To create a new release:
+
+```bash
+# Update version in Cargo.toml
+# Commit changes
+git commit -am "Bump version to x.y.z"
+
+# Create and push a tag
+git tag -a vx.y.z -m "Release vx.y.z"
+git push origin vx.y.z
+```
+
+The GitHub Actions workflow will handle the rest automatically.

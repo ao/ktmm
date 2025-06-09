@@ -134,3 +134,67 @@ jobs:
           artifacts/ktmm-windows-amd64.exe/ktmm-windows-amd64.exe
           artifacts/ktmm-macos-x86_64/ktmm-macos-x86_64
           artifacts/ktmm-macos-arm64/ktmm-macos-arm64
+
+  update-formula:
+    name: Update Homebrew Formula
+    needs: release
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Get version from tag
+      id: get_version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+    
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts
+    
+    - name: Calculate SHA256 checksums
+      run: |
+        echo "ARM64_SHA=$(sha256sum artifacts/ktmm-macos-arm64/ktmm-macos-arm64 | awk '{print $1}')" >> $GITHUB_ENV
+        echo "X86_64_SHA=$(sha256sum artifacts/ktmm-macos-x86_64/ktmm-macos-x86_64 | awk '{print $1}')" >> $GITHUB_ENV
+    
+    - name: Update Formula
+      run: |
+        # Create a Ruby script to update the formula
+        cat > update_formula.rb << 'EOL'
+        #!/usr/bin/env ruby
+        
+        version = ENV['VERSION']
+        arm64_sha = ENV['ARM64_SHA']
+        x86_64_sha = ENV['X86_64_SHA']
+        
+        formula_path = 'Formula/ktmm.rb'
+        content = File.read(formula_path)
+        
+        # Update version
+        content.gsub!(/version ".*"/, "version \"#{version}\"")
+        
+        # Update SHA256 checksums
+        content.gsub!(/sha256 ".*"  # arm64/, "sha256 \"#{arm64_sha}\"  # arm64")
+        content.gsub!(/sha256 ".*"  # x86_64/, "sha256 \"#{x86_64_sha}\"  # x86_64")
+        
+        File.write(formula_path, content)
+        EOL
+        
+        chmod +x update_formula.rb
+        ruby update_formula.rb
+    
+    - name: Configure Git
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+    
+    - name: Commit and push changes
+      run: |
+        git add Formula/ktmm.rb
+        git commit -m "Update formula for v${{ env.VERSION }}"
+        git push origin HEAD:${GITHUB_REF}
