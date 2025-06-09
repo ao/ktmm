@@ -1,4 +1,4 @@
-use ktmm::MouseMoverConfig;
+use ktmm::{MouseMover, MouseMoverConfig};
 
 // This test verifies that the default configuration is set correctly
 #[test]
