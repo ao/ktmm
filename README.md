@@ -139,24 +139,21 @@ This project includes a script to easily update the version across all files:
 
 This script will:
 1. Update the version in `Cargo.toml`
-2. Update the version in `Formula/ktmm.rb`
-3. Update the version in `Formula/ktmm_cask_style.rb`
+2. Update the version in `Formula/ktmm.rb` (URL and test assertion)
 
 After running the script, follow the displayed instructions to commit, tag, and push the changes.
 
 ### Automatic Formula Updates
 
-This project is configured to automatically update the Homebrew formulas whenever a new release is created. The GitHub Actions workflow:
+This project is configured to automatically update the Homebrew formula whenever a new release is created. The GitHub Actions workflow:
 
 1. Builds binaries for all supported platforms
 2. Creates a GitHub release with the binaries
-3. Calculates SHA256 checksums for all binaries and the source tarball
-4. Updates both formula files with the new version and checksums:
-   - `Formula/ktmm.rb` (binary formula for personal tap)
-   - `Formula/ktmm_cask_style.rb` (source-based formula for potential Homebrew core submission)
+3. Calculates SHA256 checksum for the source tarball
+4. Updates the formula file with the new checksum
 5. Commits and pushes the changes back to the main branch
 
-This eliminates the need for manual updates to the formulas when releasing new versions. The complete release process is:
+This eliminates the need for manual updates to the formula when releasing new versions. The complete release process is:
 
 ```bash
 # 1. Update the version
@@ -171,3 +168,17 @@ git push origin main && git push origin v0.5.0
 ```
 
 The GitHub Actions workflow will handle the rest automatically.
+
+### Homebrew Core Submission
+
+The formula is now designed to be compatible with Homebrew core requirements:
+- It builds from source instead of using pre-built binaries
+- It follows Homebrew's style guidelines
+- It includes proper testing and documentation
+
+When you're ready to submit to Homebrew core, follow these steps:
+
+1. Ensure you have a stable release with proper versioning
+2. Fork the Homebrew core repository: https://github.com/Homebrew/homebrew-core
+3. Add your formula to the fork
+4. Submit a pull request to Homebrew core

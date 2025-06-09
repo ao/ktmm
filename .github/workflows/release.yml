@@ -153,64 +153,38 @@ jobs:
       id: get_version
       run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
     
-    - name: Download artifacts
-      uses: actions/download-artifact@v4
-      with:
-        path: artifacts
-    
-    - name: Calculate SHA256 checksums
+    - name: Download source tarball and calculate SHA256
       run: |
-        echo "ARM64_SHA=$(sha256sum artifacts/ktmm-macos-arm64/ktmm-macos-arm64 | awk '{print $1}')" >> $GITHUB_ENV
-        echo "X86_64_SHA=$(sha256sum artifacts/ktmm-macos-x86_64/ktmm-macos-x86_64 | awk '{print $1}')" >> $GITHUB_ENV
-        
         # Download source tarball and calculate its SHA256
         curl -L -o source.tar.gz https://github.com/ao/ktmm/archive/refs/tags/v${VERSION}.tar.gz
         echo "SOURCE_SHA=$(sha256sum source.tar.gz | awk '{print $1}')" >> $GITHUB_ENV
     
-    - name: Update Formulas
+    - name: Update Formula
       run: |
-        # Create a Ruby script to update both formulas
-        cat > update_formulas.rb << 'EOL'
+        # Create a Ruby script to update the formula
+        cat > update_formula.rb << 'EOL'
         #!/usr/bin/env ruby
         
         version = ENV['VERSION']
-        arm64_sha = ENV['ARM64_SHA']
-        x86_64_sha = ENV['X86_64_SHA']
         source_sha = ENV['SOURCE_SHA']
         
-        # Update binary formula
-        binary_formula_path = 'Formula/ktmm.rb'
-        binary_content = File.read(binary_formula_path)
+        formula_path = 'Formula/ktmm.rb'
+        content = File.read(formula_path)
         
-        # Update version
-        binary_content.gsub!(/version ".*"/, "version \"#{version}\"")
+        # Update version in URL
+        content.gsub!(/url ".*\/v.*\.tar\.gz"/, "url \"https://github.com/ao/ktmm/archive/refs/tags/v#{version}.tar.gz\"")
         
-        # Update SHA256 checksums
-        binary_content.gsub!(/sha256 ".*"  # arm64/, "sha256 \"#{arm64_sha}\"  # arm64")
-        binary_content.gsub!(/sha256 ".*"  # x86_64/, "sha256 \"#{x86_64_sha}\"  # x86_64")
+        # Update SHA256 checksum
+        content.gsub!(/sha256 ".*"  # source/, "sha256 \"#{source_sha}\"  # source")
         
-        File.write(binary_formula_path, binary_content)
+        # Update version in test
+        content.gsub!(/assert_match "ktmm .*", shell_output/, "assert_match \"ktmm #{version}\", shell_output")
         
-        # Update source-based formula
-        source_formula_path = 'Formula/ktmm_cask_style.rb'
-        if File.exist?(source_formula_path)
-          source_content = File.read(source_formula_path)
-          
-          # Update version in URL
-          source_content.gsub!(/url ".*\/v.*\.tar\.gz"/, "url \"https://github.com/ao/ktmm/archive/refs/tags/v#{version}.tar.gz\"")
-          
-          # Update SHA256 checksum
-          source_content.gsub!(/sha256 ".*"/, "sha256 \"#{source_sha}\"")
-          
-          # Update version in test
-          source_content.gsub!(/assert_match "ktmm .*"/, "assert_match \"ktmm #{version}\"")
-          
-          File.write(source_formula_path, source_content)
-        end
+        File.write(formula_path, content)
         EOL
         
-        chmod +x update_formulas.rb
-        ruby update_formulas.rb
+        chmod +x update_formula.rb
+        ruby update_formula.rb
     
     - name: Configure Git
       run: |
@@ -219,6 +193,6 @@ jobs:
     
     - name: Commit and push changes
       run: |
-        git add Formula/ktmm.rb Formula/ktmm_cask_style.rb
-        git commit -m "Update formulas for v${{ env.VERSION }}"
+        git add Formula/ktmm.rb
+        git commit -m "Update formula for v${{ env.VERSION }}"
         git push origin main

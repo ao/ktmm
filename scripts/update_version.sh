@@ -27,18 +27,11 @@ rm Cargo.toml.bak
 
 # Update version in Formula/ktmm.rb
 echo "Updating Formula/ktmm.rb..."
-sed -i.bak "s/version \".*\"/version \"$NEW_VERSION\"/" Formula/ktmm.rb
+# Update URL
+sed -i.bak "s|url \".*\/v.*\.tar\.gz\"|url \"https://github.com/ao/ktmm/archive/refs/tags/v$NEW_VERSION.tar.gz\"|" Formula/ktmm.rb
+# Update test assertion
+sed -i.bak "s/assert_match \"ktmm .*\", shell_output/assert_match \"ktmm $NEW_VERSION\", shell_output/" Formula/ktmm.rb
 rm Formula/ktmm.rb.bak
-
-# Update version in Formula/ktmm_cask_style.rb
-if [ -f Formula/ktmm_cask_style.rb ]; then
-  echo "Updating Formula/ktmm_cask_style.rb..."
-  # Update URL
-  sed -i.bak "s|url \".*\/v.*\.tar\.gz\"|url \"https://github.com/ao/ktmm/archive/refs/tags/v$NEW_VERSION.tar.gz\"|" Formula/ktmm_cask_style.rb
-  # Update test assertion
-  sed -i.bak "s/assert_match \"ktmm .*\"/assert_match \"ktmm $NEW_VERSION\"/" Formula/ktmm_cask_style.rb
-  rm Formula/ktmm_cask_style.rb.bak
-fi
 
 echo "Version updated to $NEW_VERSION in all files"
 echo ""
@@ -50,4 +43,4 @@ echo ""
 echo "The GitHub Actions workflow will automatically:"
 echo "- Build binaries for all platforms"
 echo "- Create a GitHub release"
-echo "- Update formula files with correct checksums"
+echo "- Update formula file with correct checksum"
