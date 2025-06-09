@@ -128,26 +128,46 @@ MIT
 
 ## Development
 
+### Version Management
+
+This project includes a script to easily update the version across all files:
+
+```bash
+# Update to version 0.5.0
+./scripts/update_version.sh 0.5.0
+```
+
+This script will:
+1. Update the version in `Cargo.toml`
+2. Update the version in `Formula/ktmm.rb`
+3. Update the version in `Formula/ktmm_cask_style.rb`
+
+After running the script, follow the displayed instructions to commit, tag, and push the changes.
+
 ### Automatic Formula Updates
 
-This project is configured to automatically update the Homebrew formula whenever a new release is created. The GitHub Actions workflow:
+This project is configured to automatically update the Homebrew formulas whenever a new release is created. The GitHub Actions workflow:
 
 1. Builds binaries for all supported platforms
 2. Creates a GitHub release with the binaries
-3. Calculates SHA256 checksums for the macOS binaries
-4. Updates the `Formula/ktmm.rb` file with the new version and checksums
-5. Commits and pushes the changes back to the repository
+3. Calculates SHA256 checksums for all binaries and the source tarball
+4. Updates both formula files with the new version and checksums:
+   - `Formula/ktmm.rb` (binary formula for personal tap)
+   - `Formula/ktmm_cask_style.rb` (source-based formula for potential Homebrew core submission)
+5. Commits and pushes the changes back to the main branch
 
-This eliminates the need for manual updates to the formula when releasing new versions. To create a new release:
+This eliminates the need for manual updates to the formulas when releasing new versions. The complete release process is:
 
 ```bash
-# Update version in Cargo.toml
-# Commit changes
-git commit -am "Bump version to x.y.z"
+# 1. Update the version
+./scripts/update_version.sh 0.5.0
 
-# Create and push a tag
-git tag -a vx.y.z -m "Release vx.y.z"
-git push origin vx.y.z
+# 2. Commit the changes
+git commit -am "Bump version to 0.5.0"
+
+# 3. Create and push a tag
+git tag -a v0.5.0 -m "Release v0.5.0"
+git push origin main && git push origin v0.5.0
 ```
 
 The GitHub Actions workflow will handle the rest automatically.
