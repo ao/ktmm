@@ -165,17 +165,3 @@ git push origin main && git push origin v0.5.0
 ```
 
 The GitHub Actions workflow will handle the rest automatically.
-
-### Homebrew Core Submission
-
-The formula is now designed to be compatible with Homebrew core requirements:
-- It builds from source instead of using pre-built binaries
-- It follows Homebrew's style guidelines
-- It includes proper testing and documentation
-
-When you're ready to submit to Homebrew core, follow these steps:
-
-1. Ensure you have a stable release with proper versioning
-2. Fork the Homebrew core repository: https://github.com/Homebrew/homebrew-core
-3. Add your formula to the fork
-4. Submit a pull request to Homebrew core
